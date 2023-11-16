@@ -1,0 +1,14 @@
+spring:
+  profiles:
+    active: dev
+
+server:
+  port: 8080
+
+
+application:
+  name: Origin Admin
+  author: Kevin
+  email:  1129759063@qq.com
+  version: 1.0.0
+  address: https://github.com/develop-kevin/origin-admin-pro
