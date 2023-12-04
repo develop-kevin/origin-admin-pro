@@ -16,7 +16,7 @@ public class WhiteConfig {
                 "/webjars/**",
                 "/doc.html",
                 "/swagger-ui/**",
-                "/v3/api-docs/**"
+                "/v3/api-docs/**",
         };
     }
 }

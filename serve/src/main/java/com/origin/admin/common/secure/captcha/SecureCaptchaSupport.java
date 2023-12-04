@@ -38,7 +38,7 @@ public class SecureCaptchaSupport extends OncePerRequestFilter {
         if (Strings.isBlank(captchaKey)) { ServletUtils.writeToJson(Response.fail(ResponseCode.CAPTCHA_KEY_MISSION)); return; }
         if (Strings.isBlank(captchaCode)) { ServletUtils.writeToJson(Response.fail(ResponseCode.CAPTCHA_CODE_MISSION)); return; }
         try{
-            secureCaptchaService.verfiy(captchaKey,captchaCode.toLowerCase());
+            secureCaptchaService.verify(captchaKey,captchaCode.toLowerCase());
         }catch (CaptchaExpiredException e){
             ServletUtils.writeToJson(Response.fail(ResponseCode.CAPTCHA_EXPIRED));
         }catch (CaptchaValidationException e){

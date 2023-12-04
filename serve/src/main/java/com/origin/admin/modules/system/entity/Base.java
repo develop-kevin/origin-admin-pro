@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
@@ -28,7 +29,7 @@ public class Base implements Serializable {
     @TableId(value = "id", type = IdType.AUTO)
     @Schema(description = "自增ID")
     @JsonProperty(value = "id")
-    public Integer id;
+    public Long id;
 
     /**
      * 创建人
@@ -59,6 +60,7 @@ public class Base implements Serializable {
      * 更新时间
      */
     @TableField(value = "update_time",fill = FieldFill.INSERT_UPDATE)
+    @Schema(description = "更新时间")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     @JsonProperty(value = "update_time")
     public LocalDateTime updateTime;
@@ -78,14 +80,17 @@ public class Base implements Serializable {
     @TableField(value = "delete_by", fill = FieldFill.INSERT)
     @Schema(description = "删除人")
     @JsonProperty(value = "delete_by")
+    @JsonIgnore
     public String deleteBy;
 
     /**
      * 删除时间
      */
     @TableField(value = "delete_time", fill = FieldFill.INSERT)
+    @Schema(description = "删除时间")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     @JsonProperty(value = "delete_time")
+    @JsonIgnore
     public LocalDateTime deleteTime;
 
 }

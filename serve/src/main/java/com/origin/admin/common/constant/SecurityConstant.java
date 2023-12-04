@@ -8,6 +8,8 @@ package com.origin.admin.common.constant;
  */
 public class SecurityConstant {
 
+    public static final String OPTIONS_METHOD = "OPTIONS";
+
     /**
      * 登录接口方式
      * */
@@ -24,7 +26,9 @@ public class SecurityConstant {
     public static final String LOGOUT_URL = "/admin/auth/logout";
 
 
-    public static final Long CATCHA_EXPIRATION = 1000 * 60 * 5L;
+    public static final Integer CATCHA_EXPIRATION = 60 * 5;
+
+    public static final String AUTHORIZATION = "Authorization";
 
     public static final String BEARER_CODE = "Bearer ";
 

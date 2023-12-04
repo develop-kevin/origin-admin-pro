@@ -28,11 +28,11 @@ public class SecureCaptchaService {
      * @return SecureCaptcha
      */
     public SecureCaptcha generate(){
-        SpecCaptcha specCaptcha = new SpecCaptcha(142,38);
+        SpecCaptcha specCaptcha = new SpecCaptcha(110,36,4);
         String key = UUID.randomUUID().toString();
         String code = specCaptcha.text().toLowerCase();
         redisCacheUtils.setCacheObject(CacheNameConstant.CAPTCHA_NAME_PREFIX+key,code, SecurityConstant.CATCHA_EXPIRATION, TimeUnit.SECONDS);
-        return new SecureCaptcha(key,code,specCaptcha.toBase64());
+        return new SecureCaptcha(key,"",specCaptcha.toBase64());
     }
 
     /**
@@ -40,7 +40,7 @@ public class SecureCaptchaService {
      * @param key 键
      * @param code 验证码
      */
-    public void verfiy(String key,String code){
+    public void verify(String key,String code){
         String redisCode = redisCacheUtils.getCacheObject(CacheNameConstant.CAPTCHA_NAME_PREFIX + key);
         if(redisCode == null) throw new CaptchaExpiredException("验证码过期");
         if(!redisCode.equals(code)) throw new CaptchaValidationException("验证码错误");

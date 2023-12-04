@@ -1,4 +1,4 @@
-package com.origin.admin.modules.system.controller.request;
+package com.origin.admin.common.web.page;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;

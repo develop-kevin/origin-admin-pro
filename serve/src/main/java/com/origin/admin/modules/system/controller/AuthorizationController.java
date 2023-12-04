@@ -24,6 +24,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.concurrent.TimeUnit;
+
 
 /**
  * @Author: Kevin
@@ -50,13 +52,10 @@ public class AuthorizationController {
     @PostMapping("login")
     @Operation(summary = "登录")
     public Response<TokenResponse> login(@RequestBody @Valid LoginRequest loginRequest){
-        String key = CacheNameConstant.CAPTCHA_NAME_PREFIX+loginRequest.getCaptchaKey();
+        String key = CacheNameConstant.CAPTCHA_NAME_PREFIX+loginRequest.getKey();
         //1、验证码校验
         String code = redisCacheUtils.getCacheObject(key);
-        if(code == null){
-            return Response.fail(ResponseCode.CAPTCHA_CODE_MISSION);
-        }
-        if(!code.equals(loginRequest.getCaptchaCode())){
+        if(code == null || code.isBlank() || !code.equals(loginRequest.getCode())){
             return Response.fail(ResponseCode.CAPTCHA_ERROR);
         }
         //2、查询用户是否存在
@@ -136,6 +135,8 @@ public class AuthorizationController {
         TokenResponse tokenResponse = new TokenResponse();
         tokenResponse.setAccessToken(accessToken);
         tokenResponse.setExpireAt(time);
+        String key = jwtUtils.getKeyCode(sysUser.getId());
+        redisCacheUtils.setCacheObject(key,accessToken,time, TimeUnit.SECONDS);
         return tokenResponse;
     }
 

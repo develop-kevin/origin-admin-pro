@@ -84,7 +84,7 @@ public class RedisCacheUtils {
      * @param key 键名
      */
     public Boolean deleteObject(final String key) {
-        return Boolean.TRUE.equals(redisTemplate.delete(key));
+        return redisTemplate.delete(key);
     }
 
     /**

@@ -25,8 +25,14 @@ import java.util.List;
 @Service
 public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser>
     implements SysUserService{
+    /**
+     * 插入用户
+     * @param entity entity
+     * @return Long 插入ID
+     * @throws Exception 异常
+     */
     @Override
-    public long insert(SysUser entity) throws Exception {
+    public Long insert(SysUser entity) throws Exception {
         SysUser sysUser = queryByUserName(entity.getUsername());
         if(sysUser != null){
             throw new Exception("用户名已存在");
@@ -36,14 +42,14 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser>
         String passwordSalt = PasswordUtils.encoder(password);
         entity.setSalt(salt);
         entity.setPassword(passwordSalt);
-        super.save(entity);
+        super.baseMapper.insert(entity);
         return entity.getId();
     }
 
     /**
      * 查询用户名
      * @param username 用户名
-     * @return AdminUserEntity
+     * @return entity
      */
     @Override
     public SysUser queryByUserName(String username){
@@ -61,37 +67,37 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser>
      * @return boolean
      */
     @Override
-    public boolean exist(Integer id,String username){
+    public Boolean exist(Long id,String username){
         SysUser sysUser;
-        if(id == 0){
+        if(id.equals(0L)){
             sysUser = queryByUserName(username);
         }else{
             sysUser = super.baseMapper.selectById(id);
         }
-        return sysUser != null;
+        return sysUser == null;
     }
 
     /**
      * 单条查询
      * @param id 查询ID
-     * @return AdminUserEntity
+     * @return entity
      */
     @Override
-    public SysUser getDetail(Integer id) {
+    public SysUser getDetail(Long id) {
         return super.baseMapper.selectById(id);
     }
 
     /**
      * 更新用户
-     * @param entity AdminUserEntity
-     * @return AdminUserEntity
+     * @param entity entity
+     * @return Long 更新ID
      */
     @Override
-    public Integer update(SysUser entity) throws Exception {
+    public Long update(SysUser entity) throws Exception {
         if(entity.getId() == null){
             throw new Exception("用户ID不存在");
         }
-        if(entity.getPassword() != null){
+        if(!entity.getPassword().isEmpty()){
             String salt = RandomStringUtils.randomAlphanumeric(10);
             String password = entity.getPassword() + salt;
             String passwordSalt = PasswordUtils.encoder(password);
@@ -103,11 +109,11 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser>
 
     /**
      * 批量删除数据
-     * @param ids 删除用户ID
-     * @return int
+     * @param ids 删除ID
+     * @return int 删除ID
      */
     @Override
-    public Integer delete(List<Integer> ids) {
+    public Integer delete(List<Long> ids) {
         return super.baseMapper.deleteBatchIds(ids);
     }
 
@@ -127,15 +133,12 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser>
                 .orderBy(true,true,"id");
         if(!whereRequest.getBeginTime().isEmpty()){
             String dateTime = !whereRequest.getEndTime().isEmpty() ? whereRequest.getEndTime() : String.valueOf(LocalDateTime.now());
-            sysUserQueryWrapper.between("created_at",whereRequest.getBeginTime(),dateTime);
+            sysUserQueryWrapper.between("create_time",whereRequest.getBeginTime(),dateTime);
         }
-        System.out.println("page_num=="+page.getPageNum());
-        System.out.println("page_size=="+page.getPageSize());
         // 两个参数：current的值默认是1，从1开始，不是0。size是每一页的条数。
         Page<SysUser> pageList = new Page<>(page.getPageNum(), page.getPageSize());
         Page<SysUser> userPage = super.baseMapper.selectPage(pageList, sysUserQueryWrapper);
-
-        return new PageResponse<SysUser>(userPage.getCurrent(),userPage.getTotal(),userPage.getRecords());
+        return new PageResponse<>(userPage.getCurrent(),userPage.getTotal(),userPage.getRecords());
     }
 
 }

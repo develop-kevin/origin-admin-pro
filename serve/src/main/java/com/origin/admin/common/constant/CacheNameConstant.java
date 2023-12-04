@@ -19,7 +19,6 @@ public class CacheNameConstant {
 
     /**
      * Remember 存储前缀
-     *
      * TODO 待实现
      * */
     public static final String REMEMBER_NAME_PREFIX = "REMEMBER-";

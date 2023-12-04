@@ -11,13 +11,16 @@ public class ControllerConstant {
     /**
      * 基础 API 根路径
      * */
-    public static final String PREFIX = "api/";
+    public static final String PREFIX = "/api/";
 
     /**
      * 系统 API 根路径
      * */
     public static final String PREFIX_SYSTEM = PREFIX + "system";
 
+    /**
+     * 系统验证码
+     */
     public static final String PREFIX_CAPTCHA = PREFIX + "captcha";
 
 

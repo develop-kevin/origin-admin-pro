@@ -26,14 +26,14 @@ public class PageRequest {
      * */
     @JsonProperty(value = "page_num")
     @Schema(description = "当前页码",defaultValue = "1")
-//    @JsonDeserialize(as = int.class)  // 将JSON对象反序列化为int类型
-    private int pageNum;  // 默认值为1
+    @JsonDeserialize(as = long.class)  // 将JSON对象反序列化为int类型
+    private long pageNum;  // 默认值为1
 
     /**
      * 每页数量
      * */
     @JsonProperty(value = "page_size")
     @Schema(description = "每页数量",defaultValue = "10")
-//    @JsonDeserialize(as = int.class)  // 将JSON对象反序列化为int类型
-    private int pageSize;  // 默认值为10
+    @JsonDeserialize(as = long.class)  // 将JSON对象反序列化为int类型
+    private long pageSize;  // 默认值为10
 }

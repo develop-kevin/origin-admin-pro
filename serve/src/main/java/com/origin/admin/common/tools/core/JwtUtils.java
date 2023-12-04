@@ -2,16 +2,18 @@ package com.origin.admin.common.tools.core;
 
 import com.origin.admin.common.config.JwtConfig;
 import com.origin.admin.common.constant.CacheNameConstant;
+import com.origin.admin.common.constant.SecurityConstant;
 import com.origin.admin.modules.system.entity.SysUser;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.function.Function;
 
@@ -28,14 +30,22 @@ public class JwtUtils {
     @Resource
     private JwtConfig jwtConfig;
 
-    public String generateToken(long userId,String username){
-        Date now = new Date();
-        Date expirationDate = new Date(System.currentTimeMillis() + jwtConfig.getExpireAt());
+    /**
+     * 生成token
+     * @param userId 用户ID
+     * @param username 用户名
+     * @return String token
+     */
+    public String generateToken(Long userId,String username){
+        Calendar instance = Calendar.getInstance();
+        //设置过期时间
+        instance.add(Calendar.MINUTE, jwtConfig.getExpireAt());//这里改为添加分钟
+        Date expirationDate = new Date(System.currentTimeMillis() + jwtConfig.getExpireAt() * 1000);//这里计算从签发到现在的时间，需要乘以1000转为毫秒
         return Jwts.builder()
-                .setId(String.valueOf(userId))
-                .setSubject(username)
-                .setIssuedAt(now)
-                .setExpiration(expirationDate)
+                .setId(String.valueOf(userId))                                 //设置ID
+                .setSubject(username)                                          //设置主题
+                .setIssuedAt(new Date(System.currentTimeMillis()))             //签发日期设置为当前时间
+                .setExpiration(expirationDate)                                 //设置过期时间
                 .signWith(getSignInKey(),SignatureAlgorithm.HS256)
                 .compact();
     }
@@ -76,9 +86,18 @@ public class JwtUtils {
     }
 
     /**
+     * 4、从token中解析出id
+     * @param token token
+     * @return 用户ID信息
+     */
+    public Long extractUserId(String token) {
+        return Long.valueOf(extractClaim(token, Claims::getId));
+    }
+
+    /**
      * 4、从token中解析出username
      * @param token token
-     * @return 用户信息
+     * @return 用户名信息
      */
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
@@ -86,10 +105,10 @@ public class JwtUtils {
 
     /**
      * 5、判断token是否过期
-     * @param
-     * @return
+     * @param token token
+     * @return boolean
      */
-    public boolean isTokenValid(String token, SysUser sysUser) {
+    public Boolean isTokenValid(String token, SysUser sysUser) {
         // 从token中获取用户名
         final String username = extractUsername(token);
         return (username.equals(sysUser.getUsername())) &&!isTokenExpired(token);
@@ -97,21 +116,39 @@ public class JwtUtils {
 
     /**
      * 6、验证token是否过期
-     * @param token
-     * @return
+     * @param token token
+     * @return boolean
      */
-    private boolean isTokenExpired(String token) {
+    private Boolean isTokenExpired(String token) {
         return extractExpiration(token).before(new Date());
     }
     /**
-     * 6.1、从授权信息中获取token过期时间
+     * 7、从授权信息中获取token过期时间
      */
     public Date extractExpiration(String token) {
         return extractClaim(token, Claims::getExpiration);
     }
 
-    public String getKeyCode(long id){
-        return CacheNameConstant.TOKEN_NAME_PREFIX+"User-"+id;
+
+    public String getKeyCode(Long id){
+        return CacheNameConstant.TOKEN_NAME_PREFIX+"User-"+ id;
+    }
+
+
+    /**
+     * 获取token数据
+     * @param request 请求
+     * @return 返回token
+     */
+    public String getToken(HttpServletRequest request) {
+        String tokenHeader = SecurityConstant.AUTHORIZATION;
+        String tokenPrefix = SecurityConstant.BEARER_CODE;
+        String authorization = request.getHeader(tokenHeader);
+        if (authorization != null && !authorization.isEmpty() && authorization.startsWith(tokenPrefix)) {
+            return authorization.replace(tokenPrefix, "");
+        }else{
+            return "";
+        }
     }
 
 }

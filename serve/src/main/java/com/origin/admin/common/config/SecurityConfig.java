@@ -1,6 +1,7 @@
 package com.origin.admin.common.config;
 
 import com.origin.admin.modules.system.filter.JwtAuthenticationFilter;
+import jakarta.annotation.Resource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -31,12 +32,10 @@ public class SecurityConfig {
             .httpBasic(AbstractHttpConfigurer::disable)
             //前后端分离架构不需要csrf保护
             .csrf(AbstractHttpConfigurer::disable)
-
             //禁用默认登录页面
             .formLogin(AbstractHttpConfigurer::disable)
             //禁用默认退出页面
             .logout(AbstractHttpConfigurer::disable)
-
             //前后端分离是无状态的，不需要session了，直接禁用
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 //            .authorizeHttpRequests(

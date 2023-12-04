@@ -1,6 +1,5 @@
 package com.origin.admin.common.web.page;
 
-import com.github.pagehelper.PageInfo;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -33,7 +32,7 @@ public class PageResponse<T> {
     /**
      * 构建实体
      * */
-    public PageResponse(int page,int total,int  List<T> record){
+    public PageResponse(long page,long total,List<T> record){
         this.page = page;
         this.total = total;
         this.record = record;
